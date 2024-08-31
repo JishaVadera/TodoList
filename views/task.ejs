@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tasks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: #444;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        li form {
+            display: inline;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        label {
+            flex-grow: 1;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Tasks</h1>
+
+    <!-- Form to add a new task -->
+    <form action="/tasks" method="POST">
+        <label>Task Description:</label>
+        <input type="text" name="description" required>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <!-- List of all tasks -->
+    <h2>All Tasks</h2>
+    <ul>
+        <% tasks.forEach(task => { %>
+            <li>
+                <form action="/tasks/<%= task._id %>/toggle" method="POST" style="display:inline;">
+                    <input type="checkbox" name="completed" 
+                        <%= task.completed ? 'checked' : '' %> 
+                        onchange="this.form.submit()">
+                    <label class="<%= task.completed ? 'completed' : '' %>"><%= task.description %></label>
+                </form>
+                <form action="/tasks/<%= task._id %>/delete" method="POST" style="display:inline;">
+                    <button type="submit" style="background-color: #dc3545;">Delete</button>
+                </form>
+                <a href="/tasks/<%= task._id %>/edit">Edit</a>
+            </li>
+        <% }) %>
+    </ul>
+
+    <!-- List of completed tasks -->
+    <h2>Completed Tasks</h2>
+    <ul>
+        <% tasks.forEach(task => { %>
+            <% if (task.completed) { %>
+                <li>
+                    <form action="/tasks/<%= task._id %>/toggle" method="POST" style="display:inline;">
+                        <input type="checkbox" name="completed" 
+                            <%= task.completed ? 'checked' : '' %> 
+                            onchange="this.form.submit()">
+                        <label class="completed"><%= task.description %></label>
+                    </form>
+                    <form action="/tasks/<%= task._id %>/delete" method="POST" style="display:inline;">
+                        <button type="submit" style="background-color: #dc3545;">Delete</button>
+                    </form>
+                    <a href="/tasks/<%= task._id %>/edit">Edit</a>
+                </li>
+            <% } %>
+        <% }) %>
+    </ul>
+    <a href="/auth/logout">Logout</a> 
+</body>
+</html>
